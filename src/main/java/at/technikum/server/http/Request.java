@@ -8,18 +8,19 @@ public class Request {
 
     private String path;
 
-    public static Request fromExchange(HttpExchange exchange) {
-        Request request = new Request();
-        request.setMethod(exchange.getRequestMethod());
-
-        return request;
-    }
-
     public String getMethod() {
         return method;
     }
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

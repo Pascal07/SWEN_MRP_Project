@@ -8,6 +8,7 @@ public class RequestMapper {
     public Request fromExchange(HttpExchange exchange) {
         Request request = new Request();
         request.setMethod(exchange.getRequestMethod());
+        request.setPath(exchange.getRequestURI().getPath());
 
         return request;
     }
