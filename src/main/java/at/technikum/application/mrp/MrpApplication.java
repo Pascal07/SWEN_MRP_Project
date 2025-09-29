@@ -1,5 +1,4 @@
 package at.technikum.application.mrp;
-
 import at.technikum.application.common.Application;
 import at.technikum.application.common.Router;
 import at.technikum.application.mrp.user.UserController;
