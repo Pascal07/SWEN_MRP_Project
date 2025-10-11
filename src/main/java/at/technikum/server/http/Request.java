@@ -33,4 +33,13 @@ public class Request {
     public void setBody(String body) {
         this.body = body;
     }
+
+    @Override
+    public String toString() {
+        return "Request {\n" +
+                "  Methode: " + method + "\n" +
+                "  Pfad: " + path + "\n" +
+                "  Body: " + (body != null ? body : "<leer>") + "\n" +
+                "}";
+    }
 }
