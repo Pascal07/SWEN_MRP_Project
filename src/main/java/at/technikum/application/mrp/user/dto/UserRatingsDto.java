@@ -1,4 +1,4 @@
-package at.technikum.application.mrp.user;
+package at.technikum.application.mrp.user.dto;
 
 import java.util.List;
 

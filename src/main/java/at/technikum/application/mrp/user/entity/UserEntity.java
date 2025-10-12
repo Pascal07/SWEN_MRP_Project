@@ -1,4 +1,4 @@
-package at.technikum.application.mrp.user;
+package at.technikum.application.mrp.user.entity;
 
 public class UserEntity {
     private Integer id;

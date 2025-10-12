@@ -4,6 +4,7 @@ import at.technikum.application.common.Router;
 import at.technikum.application.mrp.auth.AuthController;
 import at.technikum.application.mrp.user.UserController;
 import at.technikum.application.ping.PingController;
+import at.technikum.application.mrp.media.MediaController;
 import at.technikum.server.http.ContentType;
 import at.technikum.server.http.Request;
 import at.technikum.server.http.Response;
@@ -18,6 +19,7 @@ public class MrpApplication implements Application {
         this.router.addRoute("/users", new UserController());
         this.router.addRoute("/auth", new AuthController());
         this.router.addRoute("/ping", new PingController());
+        this.router.addRoute("/media", new MediaController());
     }
 
     @Override

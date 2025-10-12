@@ -2,7 +2,7 @@
 
 ## 📜 Projektbeschreibung
 
-Ein Standalone-Backend-Service, der als **RESTful HTTP-Server** in **Java oder C#** entwickelt wird. Dieser Server dient als API für verschiedene Frontends (z.B. Mobile, Web, Konsole), die nicht Teil dieses Projekts sind. Die Plattform ermöglicht es Nutzern, Medieninhalte (Filme, Serien, Spiele) zu verwalten, zu bewerten und personalisierte Empfehlungen zu erhalten.
+Ein Standalone-Backend-Service, der als **RESTful HTTP-Server** in **Java** entwickelt wird. Dieser Server dient als API für verschiedene Frontends (z.B. Mobile, Web, Konsole), die nicht Teil dieses Projekts sind. Die Plattform ermöglicht es Nutzern, Medieninhalte (Filme, Serien, Spiele) zu verwalten, zu bewerten und personalisierte Empfehlungen zu erhalten.
 
 ---
 

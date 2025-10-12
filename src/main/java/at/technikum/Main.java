@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
 
         Server server = new Server(8080, new MrpApplication());
-        Server echoServer = new Server(9988, new EchoApplication());
+        Server echoServer = new Server(3333, new EchoApplication());
         server.start();
         echoServer.start();
     }

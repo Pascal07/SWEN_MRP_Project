@@ -1,6 +1,7 @@
 package at.technikum.application.mrp.user;
 
 import at.technikum.application.mrp.auth.AuthTokenStore;
+import at.technikum.application.mrp.user.entity.UserEntity;
 
 import java.util.Collections;
 import java.util.List;

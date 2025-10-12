@@ -1,5 +1,6 @@
 package at.technikum.application.mrp.auth;
-import at.technikum.application.mrp.user.UserEntity;
+import at.technikum.application.mrp.auth.dto.AuthRequestDto;
+import at.technikum.application.mrp.user.entity.UserEntity;
 
 import java.util.Optional;
 

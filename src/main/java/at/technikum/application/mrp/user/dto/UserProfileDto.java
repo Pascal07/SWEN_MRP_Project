@@ -1,4 +1,4 @@
-package at.technikum.application.mrp.user;
+package at.technikum.application.mrp.user.dto;
 
 public class UserProfileDto {
     private Integer id;

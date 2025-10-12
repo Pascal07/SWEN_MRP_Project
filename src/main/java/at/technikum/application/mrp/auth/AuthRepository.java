@@ -1,6 +1,6 @@
 package at.technikum.application.mrp.auth;
 
-import at.technikum.application.mrp.user.UserEntity;
+import at.technikum.application.mrp.user.entity.UserEntity;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 

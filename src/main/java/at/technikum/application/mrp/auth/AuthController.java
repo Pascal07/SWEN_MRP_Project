@@ -1,6 +1,7 @@
 package at.technikum.application.mrp.auth;
 
 import at.technikum.application.common.Controller;
+import at.technikum.application.mrp.auth.dto.AuthRequestDto;
 import at.technikum.server.http.ContentType;
 import at.technikum.server.http.Request;
 import at.technikum.server.http.Response;

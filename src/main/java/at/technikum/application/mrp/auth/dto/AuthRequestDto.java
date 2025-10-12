@@ -1,4 +1,4 @@
-package at.technikum.application.mrp.auth;
+package at.technikum.application.mrp.auth.dto;
 
 public class AuthRequestDto {
     private String username;

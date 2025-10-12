@@ -1,5 +1,10 @@
 package at.technikum.application.mrp.user;
 
+import at.technikum.application.mrp.user.dto.UserFavoritesDto;
+import at.technikum.application.mrp.user.dto.UserProfileDto;
+import at.technikum.application.mrp.user.dto.UserRatingsDto;
+import at.technikum.application.mrp.user.entity.UserEntity;
+
 import java.util.List;
 import java.util.Optional;
 

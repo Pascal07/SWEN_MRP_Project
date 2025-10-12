@@ -1,6 +1,9 @@
 package at.technikum.application.mrp.user;
 
 import at.technikum.application.common.Controller;
+import at.technikum.application.mrp.user.dto.UserFavoritesDto;
+import at.technikum.application.mrp.user.dto.UserProfileDto;
+import at.technikum.application.mrp.user.dto.UserRatingsDto;
 import at.technikum.server.http.ContentType;
 import at.technikum.server.http.Request;
 import at.technikum.server.http.Response;
@@ -8,11 +11,13 @@ import at.technikum.server.http.Status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class UserController extends Controller {
 
     private final UserService userService = new UserService();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final Pattern USER_PATH =
+            Pattern.compile("^/users/(profile|ratings|favorites)$");
 
     public UserController() {}
 
@@ -20,6 +25,14 @@ public class UserController extends Controller {
     public Response handle(Request request) {
         String path = request.getPath();
         String method = request.getMethod();
+
+        if (!USER_PATH.matcher(path).matches()) {
+            Response response = new Response();
+            response.setStatus(Status.NOT_FOUND);
+            response.setContentType(ContentType.APPLICATION_JSON);
+            response.setBody("{\"error\":\"Route not found\"}");
+            return response;
+        }
 
         switch (path) {
             case "/users/profile" -> {
@@ -53,37 +66,13 @@ public class UserController extends Controller {
                 return okJson(favoritesOpt.get());
             }
             default -> {
+                // Wird durch das Pattern oben abgefangen, aber zur Sicherheit:
                 Response response = new Response();
                 response.setStatus(Status.NOT_FOUND);
-                response.setContentType(ContentType.TEXT_PLAIN);
-                response.setBody("Route not found");
+                response.setContentType(ContentType.APPLICATION_JSON);
+                response.setBody("{\"error\":\"Route not found\"}");
                 return response;
             }
         }
-    }
-
-    private Response okJson(Object body) {
-        Response response = new Response();
-        response.setStatus(Status.OK);
-        response.setContentType(ContentType.APPLICATION_JSON);
-        try {
-            response.setBody(objectMapper.writeValueAsString(body));
-        } catch (Exception e) {
-            return errorJson(Status.INTERNAL_SERVER_ERROR, "Failed to render JSON");
-        }
-        return response;
-    }
-
-    private Response errorJson(Status status, String message) {
-        Response response = new Response();
-        response.setStatus(status);
-        response.setContentType(ContentType.APPLICATION_JSON);
-                try {
-            java.util.Map<String, String> errorMap = java.util.Map.of("error", message);
-            response.setBody(objectMapper.writeValueAsString(errorMap));
-        } catch (Exception e) {
-            response.setBody("{\"error\":\"Internal server error\"}");
-        }
-        return response;
     }
 }

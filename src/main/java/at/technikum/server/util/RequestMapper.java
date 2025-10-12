@@ -19,7 +19,7 @@ public class RequestMapper {
         request.setMethod(exchange.getRequestMethod());
         request.setPath(exchange.getRequestURI().getPath());
 
-                // Collect headers (first value; keys lower-case)
+        // Collect headers (first value; keys lower-case)
         Map<String, String> headers = new HashMap<>();
         for (Map.Entry<String, List<String>> headerEntry : exchange.getRequestHeaders().entrySet()) {
             String key = headerEntry.getKey();
