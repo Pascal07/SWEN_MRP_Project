@@ -1,6 +1,7 @@
 package at.technikum.server;
 
 import at.technikum.application.common.Application;
+import at.technikum.application.common.ExceptionMapper;
 import at.technikum.server.http.Request;
 import at.technikum.server.http.Response;
 import at.technikum.server.util.RequestMapper;
@@ -9,7 +10,6 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 public class Handler implements HttpHandler {
 
@@ -24,7 +24,12 @@ public class Handler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         Request request = requestMapper.fromExchange(exchange);
-        Response response = application.handle(request);
+        Response response;
+        try {
+            response = application.handle(request);
+        } catch (Exception e) {
+            response = ExceptionMapper.toResponse(e);
+        }
         send(exchange, response);
         // create Request object
         // give Request to Application

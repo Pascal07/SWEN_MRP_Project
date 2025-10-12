@@ -23,7 +23,7 @@ public class Response {
     }
 
     public String getContentType() {
-        return contentType.getMimeType();
+        return contentType != null ? contentType.getMimeType() : ContentType.TEXT_PLAIN.getMimeType();
     }
 
     public void setContentType(ContentType contentType) {
