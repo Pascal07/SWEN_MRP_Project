@@ -1,6 +1,8 @@
 package at.technikum.application.mrp.auth;
 import at.technikum.application.mrp.user.UserEntity;
 
+import java.util.Optional;
+
 public class AuthService {
     private final AuthRepository authRepository = new AuthRepository();
 
@@ -14,11 +16,19 @@ public class AuthService {
     public String login(AuthRequestDto dto) {
         return authRepository.findByUsername(dto.getUsername())
                 .filter(u -> u.getPassword().equals(dto.getPassword()))
-                .map(u -> u.getUsername() + "-mrpToken")
+                .map(u -> {
+                    String token = u.getUsername() + "-mrpToken";
+                    AuthTokenStore.store(token, u);
+                    return token;
+                })
                 .orElse(null);
     }
 
     public boolean usernameExists(String username) {
         return authRepository.findByUsername(username).isPresent();
+    }
+
+    public Optional<UserEntity> getUserByToken(String token) {
+        return AuthTokenStore.getUser(token);
     }
 }

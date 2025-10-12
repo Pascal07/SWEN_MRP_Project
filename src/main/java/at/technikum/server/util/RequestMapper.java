@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RequestMapper {
 
@@ -16,6 +18,18 @@ public class RequestMapper {
         Request request = new Request();
         request.setMethod(exchange.getRequestMethod());
         request.setPath(exchange.getRequestURI().getPath());
+
+                // Collect headers (first value; keys lower-case)
+        Map<String, String> headers = new HashMap<>();
+        for (Map.Entry<String, List<String>> headerEntry : exchange.getRequestHeaders().entrySet()) {
+            String key = headerEntry.getKey();
+            if (key == null) continue;
+            List<String> values = headerEntry.getValue();
+            if (values != null && !values.isEmpty()) {
+                headers.put(key.toLowerCase(), values.get(0));
+            }
+        }
+        request.setHeaders(headers);
 
         // Read body safely (also fine for GET with empty body)
         String body = readBody(exchange);
