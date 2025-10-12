@@ -5,10 +5,17 @@ import at.technikum.server.http.Request;
 import at.technikum.server.http.Response;
 import at.technikum.server.http.Status;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 public abstract class Controller {
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
+
+    // Configure object mapper to be lenient with unknown fields to prevent 500 on extra JSON fields
+    protected Controller() {
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
     public abstract Response handle(Request request);
 
     protected Response okJson(Object body) {

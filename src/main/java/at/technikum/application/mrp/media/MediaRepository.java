@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 public class MediaRepository {
 
-    private final Map<Integer, MediaEntryEntity> store = new ConcurrentHashMap<>();
-    private int idCounter = 1;
+    private static final Map<Integer, MediaEntryEntity> store = new ConcurrentHashMap<>();
+    private static int idCounter = 1;
 
     public MediaEntryEntity create(MediaEntryEntity entity) {
         entity.setId(idCounter++);
@@ -31,6 +31,10 @@ public class MediaRepository {
 
     public boolean delete(int id) {
         return store.remove(id) != null;
+    }
+
+    public Collection<MediaEntryEntity> findAll() {
+        return store.values();
     }
 
     public List<MediaEntryEntity> search(String title, String genre, String mediaType,
