@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -31,11 +32,42 @@ public class RequestMapper {
         }
         request.setHeaders(headers);
 
+        // Parse query parameters
+        Map<String, String> queryParams = parseQuery(exchange.getRequestURI().getRawQuery());
+        request.setQueryParams(queryParams);
+
         // Read body safely (also fine for GET with empty body)
         String body = readBody(exchange);
         request.setBody(body);
 
         return request;
+    }
+
+    private Map<String, String> parseQuery(String rawQuery) {
+        Map<String, String> map = new HashMap<>();
+        if (rawQuery == null || rawQuery.isEmpty()) return map;
+        String[] pairs = rawQuery.split("&");
+        for (String pair : pairs) {
+            if (pair == null || pair.isEmpty()) continue;
+            int idx = pair.indexOf('=');
+            String key;
+            String value;
+            if (idx >= 0) {
+                key = pair.substring(0, idx);
+                value = pair.substring(idx + 1);
+            } else {
+                key = pair;
+                value = "";
+            }
+            try {
+                key = URLDecoder.decode(key, StandardCharsets.UTF_8.name());
+                value = URLDecoder.decode(value, StandardCharsets.UTF_8.name());
+            } catch (Exception ignore) { }
+            if (!key.isEmpty() && !map.containsKey(key)) {
+                map.put(key, value);
+            }
+        }
+        return map;
     }
 
     private String readBody(HttpExchange exchange) {

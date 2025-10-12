@@ -15,6 +15,9 @@ public class Request {
     // Neu: Header (normalisiert auf lower-case Keys, erster Wert)
     private Map<String, String> headers = new HashMap<>();
 
+    // Neu: Query-Parameter (erste Vorkommen, Key wie in URL)
+    private Map<String, String> queryParams = new HashMap<>();
+
     public String getMethod() {
         return method;
     }
@@ -60,11 +63,29 @@ public class Request {
         return getHeader("authorization");
     }
 
+    // Query-Parameter-API
+    public void setQueryParams(Map<String, String> queryParams) {
+        this.queryParams.clear();
+        if (queryParams != null) {
+            this.queryParams.putAll(queryParams);
+        }
+    }
+
+    public Map<String, String> getQueryParams() {
+        return Collections.unmodifiableMap(queryParams);
+    }
+
+    public String getQueryParam(String name) {
+        if (name == null) return null;
+        return queryParams.get(name);
+    }
+
     @Override
     public String toString() {
         return "Request {\n" +
                 "  Methode: " + method + "\n" +
                 "  Pfad: " + path + "\n" +
+                "  Query: " + queryParams + "\n" +
                 "  Headers: " + headers + "\n" +
                 "  Body: " + (body != null ? body : "<leer>") + "\n" +
                 "}";

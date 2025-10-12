@@ -7,10 +7,15 @@ import at.technikum.server.http.Status;
 import at.technikum.application.mrp.media.dto.MediaUpsertDto;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MediaController extends Controller {
 
     private final MediaService service = new MediaService();
+
+    // Regex Pattern für /media/{id}
+    private static final Pattern MEDIA_ID_PATTERN = Pattern.compile("^/media/(\\d+)$");
 
     public MediaController() {}
 
@@ -29,6 +34,8 @@ public class MediaController extends Controller {
 
             if ("/media".equals(path)) {
                 switch (method) {
+                    case "GET":
+                        return okJson(service.search(request.getQueryParams()));
                     case "POST":
                         MediaUpsertDto createDto = readBodyAsUpsert(request.getBody());
                         return okJson(service.create(userId, createDto));
@@ -37,11 +44,9 @@ public class MediaController extends Controller {
                 }
             }
 
-            if (path.startsWith("/media/")) {
-                Integer id = parseId(path);
-                if (id == null) {
-                    return errorJson(Status.BAD_REQUEST, "Invalid media id in path");
-                }
+            Matcher matcher = MEDIA_ID_PATTERN.matcher(path);
+            if (matcher.matches()) {
+                Integer id = parseIdWithRegex(matcher);
                 switch (method) {
                     case "GET":
                         return service.getById(id)
@@ -81,11 +86,10 @@ public class MediaController extends Controller {
         return objectMapper.readValue(body, MediaUpsertDto.class);
     }
 
-    private Integer parseId(String path) {
+    // Neue Methode für Regex-Parsing
+    private Integer parseIdWithRegex(Matcher matcher) {
         try {
-            String[] parts = path.split("/");
-            if (parts.length < 3) return null;
-            return Integer.parseInt(parts[2]);
+            return Integer.parseInt(matcher.group(1));
         } catch (Exception e) {
             return null;
         }
