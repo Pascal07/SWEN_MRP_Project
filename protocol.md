@@ -25,34 +25,36 @@ graph TB
         MA[MrpApplication]
         EA[EchoApplication]
         R[Router]
+
+        subgraph "Controller Layer"
+            AC[AuthController]
+            UC[UserController]
+            MC[MediaController]
+            RC[RatingController]
+            PC[PingController]
+        end
+
+        subgraph "Service Layer"
+            AS[AuthService]
+            US[UserService]
+            MS[MediaService]
+            RS[RatingService]
+        end
+
+        subgraph "Repository Layer"
+            AR[AuthRepository]
+            UR[UserRepository]
+            MR[MediaRepository]
+            RR[RatingRepository]
+        end
+
+        subgraph "Data Layer"
+            TS[AuthTokenStore]
+            DB[(In-Memory Storage)]
+        end
     end
     
-    subgraph "Controller Layer"
-        AC[AuthController]
-        UC[UserController]
-        MC[MediaController]
-        RC[RatingController]
-        PC[PingController]
-    end
     
-    subgraph "Service Layer"
-        AS[AuthService]
-        US[UserService]
-        MS[MediaService]
-        RS[RatingService]
-    end
-    
-    subgraph "Repository Layer"
-        AR[AuthRepository]
-        UR[UserRepository]
-        MR[MediaRepository]
-        RR[RatingRepository]
-    end
-    
-    subgraph "Data Layer"
-        TS[AuthTokenStore]
-        DB[(In-Memory Storage)]
-    end
     
     C --> S
     S --> H
