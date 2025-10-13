@@ -1,0 +1,53 @@
+erDiagram
+    USERS {
+        int user_id PK
+        string username
+        string email
+        string password_hash
+        datetime created_at
+        datetime updated_at
+    }
+
+    MEDIA {
+        int media_id PK
+        string title
+        string description
+        string genre
+        string media_type
+        int release_year
+        string director
+        string cast
+        datetime created_at
+        datetime updated_at
+    }
+
+    RATINGS {
+        int rating_id PK
+        int user_id FK
+        int media_id FK
+        int rating_value
+        string comment
+        datetime created_at
+        datetime updated_at
+    }
+
+    FAVORITES {
+        int favorite_id PK
+        int user_id FK
+        int media_id FK
+        datetime created_at
+    }
+
+    AUTH_TOKENS {
+        int token_id PK
+        int user_id FK
+        string token
+        datetime expires_at
+        datetime created_at
+    }
+
+    USERS ||--o{ RATINGS : "erstellt"
+    USERS ||--o{ FAVORITES : "hat"
+    USERS ||--o{ AUTH_TOKENS : "besitzt"
+    MEDIA ||--o{ RATINGS : "wird bewertet"
+    MEDIA ||--o{ FAVORITES : "wird favorisiert"
