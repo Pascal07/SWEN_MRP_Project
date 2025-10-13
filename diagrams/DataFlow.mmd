@@ -4,40 +4,76 @@ config:
   theme: neo-dark
 ---
 flowchart TD
-    subgraph DTOs["DTOs"]
-        F1["UserProfileDto.java"]
-        F2["UserRatingsDto.java"]
-        F3["UserFavoritesDto.java"]
-    end
-    subgraph Auth["Auth"]
+    subgraph Auth["Authentication System"]
         G1["AuthController.java"]
         G2["AuthService.java"]
         G3["AuthRepository.java"]
         G4["AuthTokenStore.java"]
     end
-    subgraph Features["Features"]
+
+    subgraph User["User Management"]
+        A["UserController.java"]
+        B["UserService.java"]
+        C["UserRepository.java"]
+        F1["UserProfileDto.java"]
+        F2["UserRatingsDto.java"]
+        F3["UserFavoritesDto.java"]
+    end
+
+    subgraph Media["Media Management"]
+        M1["MediaController.java"]
+        M2["MediaService.java"]
+        M3["MediaRepository.java"]
+        F4["MediaDto.java"]
+        F5["MediaUpsertDto.java"]
+    end
+
+    subgraph Rating["Rating System"]
+        R1["RatingController.java"]
+        R2["RatingService.java"]
+        R3["RatingRepository.java"]
+        F6["RatingDto.java"]
+        F7["RatingUpsertDto.java"]
+    end
+
+    subgraph Features["Favorites"]
         H1["favoritesController.java"]
         H2["favoritesService.java"]
         H3["favoritesRepository.java"]
-        H4["ratingController.java"]
-        H5["ratingService.java"]
-        H6["ratingRepository.java"]
     end
-    A["UserController.java"] -- ruft Service --> B["UserService.java"]
-    B -- ruft Repository --> C["UserRepository.java"]
-    C -- holt Daten --> D[("In-Memory: UserEntity.java")]
-    C -. "später: DB-Zugriff<br>Connection.java" .-> E[("Datenbank")]
-    B -- baut DTO --> F1 & F2 & F3
-    B --> G4
+
+    subgraph Database["Database Layer"]
+        DB[("Datenbank")]
+    end
+
+    A --> B
+    B --> C
+    B --> F1 & F2 & F3
+
+    M1 --> M2
+    M2 --> M3
+    M2 --> F4 & F5
+
+    R1 --> R2
+    R2 --> R3
+    R2 --> F6 & F7
+
+    H1 --> H2
+    H2 --> H3
+
     G1 --> G2
     G2 --> G3
     G3 --> G4
-    H1 --> H2
-    H2 --> H3
-    H5 --> H6
-    H4 --> H5
-    H3 -. "später: DB-Zugriff" .-> E
-    H6 -. "später: DB-Zugriff" .-> E
-    G3 -. "später: DB-Zugriff" .-> E
-    E:::dbfill
+
+    B --> G4
+    M2 --> G4
+    R2 --> G4
+
+    C -. "später: DB-Zugriff" .-> DB
+    M3 -. "später: DB-Zugriff" .-> DB
+    R3 -. "später: DB-Zugriff" .-> DB
+    H3 -. "später: DB-Zugriff" .-> DB
+    G3 -. "später: DB-Zugriff" .-> DB
+
+    DB:::dbfill
     classDef dbfill fill:#ffe4e1,stroke:#a45e,stroke-width:2px,color:#5a2d0c
