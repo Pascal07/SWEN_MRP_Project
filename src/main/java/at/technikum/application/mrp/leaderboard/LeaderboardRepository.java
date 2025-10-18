@@ -1,4 +1,4 @@
 package at.technikum.application.mrp.leaderboard;
 
-public class leaderboardController {
+public class LeaderboardRepository {
 }

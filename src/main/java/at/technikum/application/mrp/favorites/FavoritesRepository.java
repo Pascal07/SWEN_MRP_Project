@@ -1,4 +1,4 @@
 package at.technikum.application.mrp.favorites;
 
-public class favoritesService {
+public class FavoritesRepository {
 }

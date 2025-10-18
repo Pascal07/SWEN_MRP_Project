@@ -1,4 +1,4 @@
 package at.technikum.application.mrp.recommendation;
 
-public class recommendationRepository {
+public class RecommendationRepository {
 }
