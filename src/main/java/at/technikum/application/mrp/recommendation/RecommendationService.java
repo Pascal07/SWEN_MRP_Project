@@ -4,10 +4,8 @@ import at.technikum.application.mrp.media.MediaRepository;
 import at.technikum.application.mrp.rating.RatingRepository;
 import at.technikum.application.mrp.user.UserRepository;
 import at.technikum.application.mrp.user.entity.UserEntity;
-
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class RecommendationService {
     private final RecommendationRepository recommendationRepository;
@@ -24,11 +22,31 @@ public class RecommendationService {
         this.ratingRepository = ratingRepository;
     }
 
-    // Auth helper (wie in anderen Services)
-    public Optional<Integer> getAuthorizedUserId(String authorizationHeader) {
+    // wirft Exceptions, die vom ExceptionMapper verarbeitet werden
+    public List<Map<String, Object>> recommendationsByGenre(String authorizationHeader, String genre) {
+        int userId = requireAuthorizedUserId(authorizationHeader);
+        if (genre == null || genre.isBlank()) {
+            throw new IllegalArgumentException("genre query parameter is required for type=genre");
+        }
+        // Logikfrei: Platzhalter
+        return List.of();
+    }
+
+    public List<Map<String, Object>> recommendationsForUser(String authorizationHeader) {
+        int userId = requireAuthorizedUserId(authorizationHeader);
+        // Logikfrei: Platzhalter
+        return List.of();
+    }
+
+    // Helpers
+    private int requireAuthorizedUserId(String authorizationHeader) {
         String token = extractBearerToken(authorizationHeader);
-        if (token == null) return Optional.empty();
-        return userRepository.findByToken(token).map(UserEntity::getId);
+        if (token == null) {
+            throw new SecurityException("Missing or invalid Authorization header");
+        }
+        return userRepository.findByToken(token)
+                .map(UserEntity::getId)
+                .orElseThrow(() -> new SecurityException("Invalid token"));
     }
 
     private String extractBearerToken(String authorizationHeader) {
@@ -37,14 +55,5 @@ public class RecommendationService {
         if (!authorizationHeader.startsWith(prefix)) return null;
         String token = authorizationHeader.substring(prefix.length()).trim();
         return token.isEmpty() ? null : token;
-    }
-
-    // Logikfreie Platzhalter-Methoden
-    public List<Map<String, Object>> byGenre(int userId, String genre) {
-        return List.of();
-    }
-
-    public List<Map<String, Object>> forUser(int userId) {
-        return List.of();
     }
 }

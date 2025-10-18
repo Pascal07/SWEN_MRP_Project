@@ -1,6 +1,7 @@
 package at.technikum.application.mrp;
 import at.technikum.application.common.Application;
 import at.technikum.application.common.Router;
+import at.technikum.application.common.ExceptionMapper;
 import at.technikum.application.mrp.auth.AuthController;
 import at.technikum.application.mrp.auth.AuthRepository;
 import at.technikum.application.mrp.auth.AuthService;
@@ -62,16 +63,13 @@ public class MrpApplication implements Application {
     @Override
     public Response handle(Request request) {
         final String path = request.getPath();
-        return router.findController(path)
-                .map(controller -> controller.handle(request))
-                .orElseGet(this::notFound);
-    }
-
-    private Response notFound() {
-        Response response = new Response();
-        response.setStatus(Status.NOT_FOUND);
-        response.setContentType(ContentType.TEXT_PLAIN);
-        response.setBody("Route not found");
-        return response;
+        return router.findController(path).map(controller -> {
+                    try {
+                        return controller.handle(request);
+                    } catch (Exception e) {
+                        return ExceptionMapper.toResponse(e);
+                    }
+                })
+                .orElseGet(() -> ExceptionMapper.toResponse(new java.util.NoSuchElementException("Route not found")));
     }
 }

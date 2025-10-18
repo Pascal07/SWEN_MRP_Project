@@ -16,6 +16,12 @@ public class ExceptionMapper {
         } else if (e instanceof SecurityException) {
             r.setStatus(Status.UNAUTHORIZED);
             r.setBody("{\"error\":\"" + sanitize(e.getMessage()) + "\"}");
+        } else if (e instanceof UnsupportedOperationException) {
+            r.setStatus(Status.METHOD_NOT_ALLOWED);
+            r.setBody("{\"error\":\"" + sanitize(messageOrDefault(e, "Method not allowed")) + "\"}");
+        } else if (e instanceof java.util.NoSuchElementException) {
+            r.setStatus(Status.NOT_FOUND);
+            r.setBody("{\"error\":\"" + sanitize(messageOrDefault(e, "Not found")) + "\"}");
         } else {
             r.setStatus(Status.INTERNAL_SERVER_ERROR);
             String msg = e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
@@ -28,5 +34,9 @@ public class ExceptionMapper {
         if (s == null) return "";
         return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }
-}
 
+    private static String messageOrDefault(Exception e, String def) {
+        String m = e.getMessage();
+        return (m == null || m.isBlank()) ? def : m;
+    }
+}
