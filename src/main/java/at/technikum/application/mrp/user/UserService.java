@@ -10,7 +10,11 @@ import java.util.Optional;
 
 public class UserService {
 
-    private final UserRepository userRepository = new UserRepository();
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     // Public API: Controller bekommt direkt DTOs und sieht keine Entities
     public Optional<UserProfileDto> getProfile(String authorizationHeader) {

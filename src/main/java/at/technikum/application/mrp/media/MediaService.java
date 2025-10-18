@@ -15,8 +15,13 @@ import java.util.stream.Collectors;
 
 public class MediaService {
 
-    private final MediaRepository repository = new MediaRepository();
-    private final UserRepository userRepository = new UserRepository();
+    private final MediaRepository mediaRepository;
+    private final UserRepository userRepository;
+
+    public MediaService(MediaRepository mediaRepository, UserRepository userRepository) {
+        this.mediaRepository = mediaRepository;
+        this.userRepository = userRepository;
+    }
 
     // Auth helpers
     public Optional<Integer> getAuthorizedUserId(String authorizationHeader) {
@@ -39,38 +44,38 @@ public class MediaService {
         MediaEntryEntity e = new MediaEntryEntity();
         e.setCreatorUserId(userId);
         applyUpsert(e, dto);
-        MediaEntryEntity saved = repository.create(e);
+        MediaEntryEntity saved = mediaRepository.create(e);
         return toDetailDto(saved);
     }
 
     // Get by id (auth already checked in controller)
     public Optional<MediaDetailDto> getById(int id) {
-        return repository.findById(id).map(this::toDetailDto);
+        return mediaRepository.findById(id).map(this::toDetailDto);
     }
 
     // Update (only by owner)
     public Optional<MediaDetailDto> update(int userId, int id, MediaUpsertDto dto) {
         validateUpsert(dto);
-        Optional<MediaEntryEntity> existingOpt = repository.findById(id);
+        Optional<MediaEntryEntity> existingOpt = mediaRepository.findById(id);
         if (existingOpt.isEmpty()) return Optional.empty();
         MediaEntryEntity existing = existingOpt.get();
         if (!existing.getCreatorUserId().equals(userId)) {
             throw new SecurityException("Only creator can update this entry");
         }
         applyUpsert(existing, dto);
-        MediaEntryEntity updated = repository.update(existing);
+        MediaEntryEntity updated = mediaRepository.update(existing);
         return Optional.ofNullable(updated).map(this::toDetailDto);
     }
 
     // Delete (only by owner)
     public boolean delete(int userId, int id) {
-        Optional<MediaEntryEntity> existingOpt = repository.findById(id);
+        Optional<MediaEntryEntity> existingOpt = mediaRepository.findById(id);
         if (existingOpt.isEmpty()) return false;
         MediaEntryEntity existing = existingOpt.get();
         if (!existing.getCreatorUserId().equals(userId)) {
             throw new SecurityException("Only creator can delete this entry");
         }
-        return repository.delete(id);
+        return mediaRepository.delete(id);
     }
 
     // Search & filter
@@ -83,7 +88,7 @@ public class MediaService {
         Integer minRating = parseInt(query.get("rating"));
         String sortBy = normalize(query.get("sortBy"));
 
-        return repository.search(title, genre, mediaType, releaseYear, ageRestriction, minRating, sortBy)
+        return mediaRepository.search(title, genre, mediaType, releaseYear, ageRestriction, minRating, sortBy)
                 .stream()
                 .map(this::toDetailDto)
                 .collect(Collectors.toList());

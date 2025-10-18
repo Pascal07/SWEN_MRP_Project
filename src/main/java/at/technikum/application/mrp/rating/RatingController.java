@@ -13,12 +13,16 @@ import java.util.regex.Pattern;
 
 public class RatingController extends Controller {
 
-    private final RatingService service = new RatingService();
+    private final RatingService ratingService;
 
     private static final Pattern MEDIA_PATTERN = Pattern.compile("^/rating/media/(\\d+)$");
     private static final Pattern ID_PATTERN = Pattern.compile("^/rating/(\\d+)$");
     private static final Pattern LIKE_PATTERN = Pattern.compile("^/rating/(\\d+)/like$");
     private static final Pattern CONFIRM_PATTERN = Pattern.compile("^/rating/(\\d+)/confirm$");
+
+    public RatingController(RatingService ratingService) {
+        this.ratingService = ratingService;
+    }
 
     @Override
     public Response handle(Request request) {
@@ -26,7 +30,7 @@ public class RatingController extends Controller {
         String method = request.getMethod();
 
         try {
-            Optional<Integer> userIdOpt = service.getAuthorizedUserId(request.getAuthorization());
+            Optional<Integer> userIdOpt = ratingService.getAuthorizedUserId(request.getAuthorization());
             if (userIdOpt.isEmpty()) {
                 return errorJson(Status.UNAUTHORIZED, "Missing or invalid Authorization header");
             }
@@ -42,7 +46,7 @@ public class RatingController extends Controller {
                 if (createDto.getMediaId() == null) {
                     createDto.setMediaId(mediaIdFromPath);
                 }
-                return okJson(service.create(userId, createDto));
+                return okJson(ratingService.create(userId, createDto));
             }
 
             // List or create via body on base path "/rating" (optional convenience)
@@ -54,10 +58,10 @@ public class RatingController extends Controller {
                         if (mediaId == null) {
                             return errorJson(Status.BAD_REQUEST, "mediaId query parameter is required");
                         }
-                        return okJson(service.listByMedia(userId, mediaId));
+                        return okJson(ratingService.listByMedia(userId, mediaId));
                     case "POST":
                         RatingUpsertDto createDto = readBodyAsUpsert(request.getBody());
-                        return okJson(service.create(userId, createDto));
+                        return okJson(ratingService.create(userId, createDto));
                     default:
                         return errorJson(Status.METHOD_NOT_ALLOWED, "Method not allowed");
                 }
@@ -69,11 +73,11 @@ public class RatingController extends Controller {
                 if (id == null) return errorJson(Status.BAD_REQUEST, "Invalid id");
                 switch (method) {
                     case "POST":
-                        return service.like(userId, id)
+                        return ratingService.like(userId, id)
                                 .map(this::okJson)
                                 .orElseGet(() -> errorJson(Status.NOT_FOUND, "Rating not found"));
                     case "DELETE":
-                        return service.unlike(userId, id)
+                        return ratingService.unlike(userId, id)
                                 .map(this::okJson)
                                 .orElseGet(() -> errorJson(Status.NOT_FOUND, "Rating not found"));
                     default:
@@ -86,7 +90,7 @@ public class RatingController extends Controller {
                 Integer id = parseId(mConfirm);
                 if (id == null) return errorJson(Status.BAD_REQUEST, "Invalid id");
                 if (!"POST".equals(method)) return errorJson(Status.METHOD_NOT_ALLOWED, "Method not allowed");
-                return service.confirm(userId, id)
+                return ratingService.confirm(userId, id)
                         .map(this::okJson)
                         .orElseGet(() -> errorJson(Status.NOT_FOUND, "Rating not found"));
             }
@@ -97,16 +101,16 @@ public class RatingController extends Controller {
                 if (id == null) return errorJson(Status.BAD_REQUEST, "Invalid id");
                 switch (method) {
                     case "GET":
-                        return service.getById(userId, id)
+                        return ratingService.getById(userId, id)
                                 .map(this::okJson)
                                 .orElseGet(() -> errorJson(Status.NOT_FOUND, "Rating not found"));
                     case "PUT":
                         RatingUpsertDto updateDto = readBodyAsUpsert(request.getBody());
-                        return service.update(userId, id, updateDto)
+                        return ratingService.update(userId, id, updateDto)
                                 .map(this::okJson)
                                 .orElseGet(() -> errorJson(Status.NOT_FOUND, "Rating not found"));
                     case "DELETE":
-                        boolean deleted = service.delete(userId, id);
+                        boolean deleted = ratingService.delete(userId, id);
                         if (deleted) return okJson(java.util.Map.of("message", "Rating deleted"));
                         return errorJson(Status.NOT_FOUND, "Rating not found");
                     default:

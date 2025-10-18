@@ -6,18 +6,21 @@ import at.technikum.server.http.Response;
 import at.technikum.server.http.Status;
 import at.technikum.application.mrp.media.dto.MediaUpsertDto;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MediaController extends Controller {
 
-    private final MediaService service = new MediaService();
+    private final MediaService mediaService;
 
     // Regex Pattern für /media/{id}
     private static final Pattern MEDIA_ID_PATTERN = Pattern.compile("^/media/(\\d+)$");
 
-    public MediaController() {}
+    public MediaController(MediaService mediaservice) {
+        this.mediaService = mediaservice;
+    }
 
     @Override
     public Response handle(Request request){
@@ -26,7 +29,7 @@ public class MediaController extends Controller {
 
         try {
             // require auth for all media endpoints
-            Optional<Integer> userIdOpt = service.getAuthorizedUserId(request.getAuthorization());
+            Optional<Integer> userIdOpt = mediaService.getAuthorizedUserId(request.getAuthorization());
             if (userIdOpt.isEmpty()) {
                 return errorJson(Status.UNAUTHORIZED, "Missing or invalid Authorization header");
             }
@@ -35,10 +38,10 @@ public class MediaController extends Controller {
             if ("/media".equals(path)) {
                 switch (method) {
                     case "GET":
-                        return okJson(service.search(request.getQueryParams()));
+                        return okJson(mediaService.search(request.getQueryParams()));
                     case "POST":
                         MediaUpsertDto createDto = readBodyAsUpsert(request.getBody());
-                        return okJson(service.create(userId, createDto));
+                        return okJson(mediaService.create(userId, createDto));
                     default:
                         return errorJson(Status.METHOD_NOT_ALLOWED, "Method not allowed");
                 }
@@ -49,18 +52,18 @@ public class MediaController extends Controller {
                 Integer id = parseIdWithRegex(matcher);
                 switch (method) {
                     case "GET":
-                        return service.getById(id)
+                        return mediaService.getById(id)
                                 .map(this::okJson)
                                 .orElseGet(() -> errorJson(Status.NOT_FOUND, "Media not found"));
                     case "PUT":
                         MediaUpsertDto updateDto = readBodyAsUpsert(request.getBody());
-                        return service.update(userId, id, updateDto)
+                        return mediaService.update(userId, id, updateDto)
                                 .map(this::okJson)
                                 .orElseGet(() -> errorJson(Status.NOT_FOUND, "Media not found"));
                     case "DELETE":
-                        boolean deleted = service.delete(userId, id);
+                        boolean deleted = mediaService.delete(userId, id);
                         if (deleted) {
-                            return okJson(java.util.Map.of("message", "Media deleted"));
+                            return okJson(Map.of("message", "Media deleted"));
                         } else {
                             return errorJson(Status.NOT_FOUND, "Media not found");
                         }

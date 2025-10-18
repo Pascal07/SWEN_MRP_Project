@@ -15,9 +15,15 @@ import java.util.stream.Collectors;
 
 public class RatingService {
 
-    private final RatingRepository ratingRepository = new RatingRepository();
-    private final MediaRepository mediaRepository = new MediaRepository();
-    private final UserRepository userRepository = new UserRepository();
+    private final RatingRepository ratingRepository;
+    private final MediaRepository mediaRepository;
+    private final UserRepository userRepository;
+
+    public RatingService(RatingRepository ratingRepository, MediaRepository mediaRepository, UserRepository userRepository) {
+        this.ratingRepository = ratingRepository;
+        this.mediaRepository = mediaRepository;
+        this.userRepository = userRepository;
+    }
 
     // Auth helpers
     public Optional<Integer> getAuthorizedUserId(String authorizationHeader) {

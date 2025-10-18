@@ -15,10 +15,11 @@ public class AuthController extends Controller {
     private static final Pattern AUTH_PATH =
             Pattern.compile("^/auth/(register|login)$");
 
-    private final AuthService authService = new AuthService();
+    private final AuthService authService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public AuthController() {
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @Override

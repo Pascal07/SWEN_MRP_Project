@@ -5,8 +5,11 @@ import at.technikum.application.mrp.user.entity.UserEntity;
 import java.util.Optional;
 
 public class AuthService {
-    private final AuthRepository authRepository = new AuthRepository();
+    private final AuthRepository authRepository;
 
+    public AuthService(AuthRepository authRepository) {
+        this.authRepository = authRepository;
+    }
     public void register(AuthRequestDto dto) {
         UserEntity entity = new UserEntity();
         entity.setUsername(dto.getUsername());

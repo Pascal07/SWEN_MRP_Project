@@ -8,18 +8,19 @@ import at.technikum.server.http.ContentType;
 import at.technikum.server.http.Request;
 import at.technikum.server.http.Response;
 import at.technikum.server.http.Status;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class UserController extends Controller {
 
-    private final UserService userService = new UserService();
+    private final UserService userService;
     private static final Pattern USER_PATH =
             Pattern.compile("^/users/(profile|ratings|favorites)$");
 
-    public UserController() {}
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public Response handle(Request request) {
