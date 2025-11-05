@@ -38,16 +38,8 @@ erDiagram
         datetime created_at
     }
 
-    AUTH_TOKENS {
-        int token_id PK
-        int user_id FK
-        string token
-        datetime expires_at
-        datetime created_at
-    }
-
-    USERS ||--o{ RATINGS : "erstellt"
-    USERS ||--o{ FAVORITES : "hat"
-    USERS ||--o{ AUTH_TOKENS : "besitzt"
-    MEDIA ||--o{ RATINGS : "wird bewertet"
-    MEDIA ||--o{ FAVORITES : "wird favorisiert"
+    %% Präzisere, deutschsprachige Beschriftungen mit Multiplizitäten und FK-Hinweis
+    USERS ||--o{ RATINGS : "1:N"
+    USERS ||--o{ FAVORITES : "1:N"
+    MEDIA ||--o{ RATINGS : "1:N"
+    MEDIA ||--o{ FAVORITES : "1:N"
