@@ -13,9 +13,7 @@ public class Main {
         System.out.println("Database initialized successfully!");
 
         Server server = new Server(8080, new MrpApplication());
-        //Server echoServer = new Server(3333, new EchoApplication());
         server.start();
-        //echoServer.start();
 
     }
 }

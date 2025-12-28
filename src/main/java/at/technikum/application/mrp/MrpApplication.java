@@ -24,15 +24,12 @@ import at.technikum.application.mrp.user.UserService;
 import at.technikum.application.ping.PingController;
 import at.technikum.application.mrp.media.MediaController;
 import at.technikum.application.mrp.rating.RatingController;
-import at.technikum.server.http.ContentType;
 import at.technikum.server.http.Request;
 import at.technikum.server.http.Response;
-import at.technikum.server.http.Status;
 
 public class MrpApplication implements Application {
 
     private final Router router;
-    private final UserRepository userRepository = new UserRepository();
     private final MediaRepository mediaRepository = new MediaRepository();
     private final AuthRepository authRepository = new AuthRepository();
     private final RatingRepository ratingRepository = new RatingRepository();
@@ -40,8 +37,11 @@ public class MrpApplication implements Application {
     private final FavoritesRepository favoritesRepository = new FavoritesRepository();
     private final RecommendationRepository recommendationRepository = new RecommendationRepository();
 
-    private final UserService userService = new UserService(userRepository);
+    // AuthService muss vor UserRepository initialisiert werden
     private final AuthService authService = new AuthService(authRepository);
+    private final UserRepository userRepository = new UserRepository(authService);
+
+    private final UserService userService = new UserService(userRepository);
     private final MediaService mediaService = new MediaService(mediaRepository, userRepository);
     private final RatingService ratingService = new RatingService(ratingRepository, mediaRepository, userRepository);
     private final LeaderboardService leaderboardService = new LeaderboardService(leaderboardRepository);

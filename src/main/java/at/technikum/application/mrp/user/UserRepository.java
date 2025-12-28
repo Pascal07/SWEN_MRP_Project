@@ -1,6 +1,6 @@
 package at.technikum.application.mrp.user;
 
-import at.technikum.application.mrp.auth.AuthTokenStore;
+import at.technikum.application.mrp.auth.AuthService;
 import at.technikum.application.mrp.database.DatabaseConnection;
 import at.technikum.application.mrp.favorites.entity.FavoriteEntity;
 import at.technikum.application.mrp.rating.entity.RatingEntity;
@@ -12,9 +12,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserRepository {
+    private final AuthService authService;
+
+    public UserRepository(AuthService authService) {
+        this.authService = authService;
+    }
 
     public Optional<UserEntity> findByToken(String token) {
-        return AuthTokenStore.getUser(token);
+        return authService.getUserByToken(token);
     }
 
     public List<RatingEntity> findRatingsByUserId(Integer userId) {
