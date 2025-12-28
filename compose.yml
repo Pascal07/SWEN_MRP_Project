@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:18.0
+    container_name: mrp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mrp
+      POSTGRES_PASSWORD: mrp
+      POSTGRES_DB: mrpdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - mrpdata:/var/lib/postgresql
+
+volumes:
+  mrpdata:
