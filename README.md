@@ -57,10 +57,39 @@ Ein Standalone-Backend-Service, der als **RESTful HTTP-Server** in **Java** entw
     * Verwendung von HTTP-Helfer-Frameworks wie **`HttpListener`** ist erlaubt.
     * **Keine Verwendung** von kompletten Frameworks wie ASP.NET, Spring oder JSP/JSF.
 * **Serialisierung**: Nutzung von Paketen zur Objekt-Serialisierung (z.B. **Jackson, Newtonsoft.JSON**).
-* **Datenbank**: Datenpersistenz in einer **PostgreSQL-Datenbank**, die in **Docker** laufen kann.
+* **Datenbank**: ✅ Datenpersistenz in einer **PostgreSQL-Datenbank** via **Docker** implementiert.
 * **Testing**:
     * Bereitstellung einer **Postman-Collection** oder eines **cURL-Skripts** für Integrationstests.
     * Erstellung von mindestens **20 Unit-Tests** zur Validierung der Kern-Geschäftslogik.
+
+---
+
+## 🗄️ Datenbank (PostgreSQL)
+
+Die Plattform verwendet **PostgreSQL** für persistente Datenspeicherung:
+
+* **Setup**: Docker-Container via `docker-compose up -d`
+* **Connection**: JDBC mit PreparedStatements (SQL-Injection-Schutz)
+* **Schema**: Automatische Initialisierung beim Start
+* **Tabellen**: users, media, ratings, favorites
+* **Features**: Foreign Keys, Constraints, Indizes
+
+📚 **Dokumentation:**
+- [DATABASE.md](DATABASE.md) - Vollständige Datenbank-Dokumentation
+- [QUICKSTART.md](QUICKSTART.md) - Testing-Anleitung
+- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - Übersicht aller Änderungen
+
+**Schnellstart:**
+```bash
+# 1. Docker-Container starten
+docker-compose up -d
+
+# 2. Anwendung kompilieren
+mvn clean compile
+
+# 3. Server starten (initialisiert automatisch das Schema)
+mvn exec:java -Dexec.mainClass="at.technikum.Main"
+```
 
 ---
 

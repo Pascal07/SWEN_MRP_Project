@@ -5,7 +5,6 @@ import at.technikum.application.mrp.user.dto.UserProfileDto;
 import at.technikum.application.mrp.user.dto.UserRatingsDto;
 import at.technikum.application.mrp.user.entity.UserEntity;
 
-import java.util.List;
 import java.util.Optional;
 
 public class UserService {
@@ -25,7 +24,7 @@ public class UserService {
     public Optional<UserRatingsDto> getRatings(String authorizationHeader) {
         return authenticate(authorizationHeader)
                 .map(user -> {
-                    List<Object> ratings = userRepository.findRatingsByUserId(user.getId());
+                    var ratings = userRepository.findRatingsByUserId(user.getId());
                     return new UserRatingsDto(user.getId(), ratings);
                 });
     }
@@ -33,7 +32,7 @@ public class UserService {
     public Optional<UserFavoritesDto> getFavorites(String authorizationHeader) {
         return authenticate(authorizationHeader)
                 .map(user -> {
-                    List<Object> favorites = userRepository.findFavoritesByUserId(user.getId());
+                    var favorites = userRepository.findFavoritesByUserId(user.getId());
                     return new UserFavoritesDto(user.getId(), favorites);
                 });
     }

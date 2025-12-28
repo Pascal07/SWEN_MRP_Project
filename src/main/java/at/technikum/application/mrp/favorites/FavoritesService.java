@@ -1,11 +1,12 @@
 package at.technikum.application.mrp.favorites;
 
+import at.technikum.application.mrp.favorites.entity.FavoriteEntity;
 import at.technikum.application.mrp.media.MediaRepository;
 import at.technikum.application.mrp.user.UserRepository;
 import at.technikum.application.mrp.user.entity.UserEntity;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FavoritesService {
     private final FavoritesRepository favoritesRepository;
@@ -21,20 +22,36 @@ public class FavoritesService {
     // Öffentliche API: wirft Exceptions, die zentral gemappt werden
     public List<Integer> listFavorites(String authorizationHeader) {
         int userId = requireAuthorizedUserId(authorizationHeader);
-        // Logikfrei: Platzhalter
-        return Collections.emptyList();
+        return favoritesRepository.findByUserId(userId).stream()
+                .map(FavoriteEntity::getMediaId)
+                .collect(Collectors.toList());
     }
 
     public void addFavorite(String authorizationHeader, int mediaId) {
         int userId = requireAuthorizedUserId(authorizationHeader);
         validateMediaId(mediaId);
-        // Logikfrei: Platzhalter (kein Persist)
+
+        // Prüfen ob Media existiert
+        if (mediaRepository.findById(mediaId).isEmpty()) {
+            throw new IllegalArgumentException("Media not found");
+        }
+
+        // Prüfen ob bereits Favorit
+        if (favoritesRepository.exists(userId, mediaId)) {
+            throw new IllegalStateException("Already in favorites");
+        }
+
+        FavoriteEntity favorite = new FavoriteEntity(userId, mediaId);
+        favoritesRepository.create(favorite);
     }
 
     public void removeFavorite(String authorizationHeader, int mediaId) {
         int userId = requireAuthorizedUserId(authorizationHeader);
         validateMediaId(mediaId);
-        // Logikfrei: Platzhalter (kein Persist)
+
+        if (!favoritesRepository.delete(userId, mediaId)) {
+            throw new IllegalStateException("Favorite not found");
+        }
     }
 
     // Helpers
@@ -62,3 +79,5 @@ public class FavoritesService {
         return token.isEmpty() ? null : token;
     }
 }
+
+

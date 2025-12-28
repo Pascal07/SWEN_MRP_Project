@@ -1,14 +1,16 @@
 package at.technikum.application.mrp.user.dto;
 
+import at.technikum.application.mrp.favorites.entity.FavoriteEntity;
+
 import java.util.List;
 
 public class UserFavoritesDto {
     private Integer userId;
-    private List<Object> favorites;
+    private List<FavoriteEntity> favorites;
 
     public UserFavoritesDto() {}
 
-    public UserFavoritesDto(Integer userId, List<Object> favorites) {
+    public UserFavoritesDto(Integer userId, List<FavoriteEntity> favorites) {
         this.userId = userId;
         this.favorites = favorites;
     }
@@ -21,11 +23,11 @@ public class UserFavoritesDto {
         this.userId = userId;
     }
 
-    public List<Object> getFavorites() {
+    public List<FavoriteEntity> getFavorites() {
         return favorites;
     }
 
-    public void setFavorites(List<Object> favorites) {
+    public void setFavorites(List<FavoriteEntity> favorites) {
         this.favorites = favorites;
     }
 }
