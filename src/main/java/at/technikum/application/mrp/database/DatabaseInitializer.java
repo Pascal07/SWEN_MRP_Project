@@ -82,11 +82,26 @@ public class DatabaseInitializer {
                 )
                 """);
 
+            // Create RATING_LIKES table
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS rating_likes (
+                    rating_like_id SERIAL PRIMARY KEY,
+                    rating_id INTEGER NOT NULL,
+                    user_id INTEGER NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (rating_id) REFERENCES ratings(rating_id) ON DELETE CASCADE,
+                    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+                    UNIQUE (rating_id, user_id)
+                )
+                """);
+
             // Create index for faster queries
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_ratings_media_id ON ratings(media_id)");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_ratings_user_id ON ratings(user_id)");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_favorites_user_id ON favorites(user_id)");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_favorites_media_id ON favorites(media_id)");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_rating_likes_rating_id ON rating_likes(rating_id)");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_rating_likes_user_id ON rating_likes(user_id)");
 
             if (tablesExist) {
                 System.out.println("✓ Database schema verified - all tables present");

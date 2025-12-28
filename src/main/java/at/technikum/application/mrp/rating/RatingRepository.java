@@ -70,13 +70,68 @@ public class RatingRepository {
             stmt.setInt(4, e.getId());
 
             int rowsAffected = stmt.executeUpdate();
+
+            // Update likes in database
+            if (rowsAffected > 0) {
+                updateLikes(e.getId(), e.getLikedByUserIds());
+            }
+
             return rowsAffected > 0 ? e : null;
         } catch (SQLException ex) {
             throw new RuntimeException("Failed to update rating", ex);
         }
     }
 
+    private void updateLikes(int ratingId, Set<Integer> likedByUserIds) {
+        // Remove all existing likes
+        String deleteSql = "DELETE FROM rating_likes WHERE rating_id = ?";
+        // Insert new likes
+        String insertSql = "INSERT INTO rating_likes (rating_id, user_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
+
+        try (Connection conn = DatabaseConnection.getInstance().getConnection()) {
+            // Delete existing likes
+            try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+                deleteStmt.setInt(1, ratingId);
+                deleteStmt.executeUpdate();
+            }
+
+            // Insert new likes
+            if (likedByUserIds != null && !likedByUserIds.isEmpty()) {
+                try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+                    for (Integer userId : likedByUserIds) {
+                        insertStmt.setInt(1, ratingId);
+                        insertStmt.setInt(2, userId);
+                        insertStmt.addBatch();
+                    }
+                    insertStmt.executeBatch();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException("Failed to update likes", ex);
+        }
+    }
+
+    private Set<Integer> loadLikes(int ratingId) {
+        String sql = "SELECT user_id FROM rating_likes WHERE rating_id = ?";
+        Set<Integer> likes = new HashSet<>();
+
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, ratingId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                likes.add(rs.getInt("user_id"));
+            }
+            return likes;
+        } catch (SQLException ex) {
+            throw new RuntimeException("Failed to load likes", ex);
+        }
+    }
+
     public boolean delete(int id) {
+        // Likes will be automatically deleted due to ON DELETE CASCADE in the database
         String sql = "DELETE FROM ratings WHERE rating_id = ?";
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -157,6 +212,9 @@ public class RatingRepository {
         if (created != null) {
             entity.setTimestamp(created.getTime());
         }
+
+        // Load likes from database
+        entity.setLikedByUserIds(loadLikes(entity.getId()));
 
         return entity;
     }

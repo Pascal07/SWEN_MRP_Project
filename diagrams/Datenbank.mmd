@@ -27,6 +27,7 @@ erDiagram
         int media_id FK
         int rating_value
         string comment
+        boolean confirmed
         datetime created_at
         datetime updated_at
     }
@@ -38,8 +39,17 @@ erDiagram
         datetime created_at
     }
 
+    RATING_LIKES {
+        int rating_like_id PK
+        int rating_id FK
+        int user_id FK
+        datetime created_at
+    }
+
     %% Präzisere, deutschsprachige Beschriftungen mit Multiplizitäten und FK-Hinweis
-    USERS ||--o{ RATINGS : "1:N"
-    USERS ||--o{ FAVORITES : "1:N"
-    MEDIA ||--o{ RATINGS : "1:N"
-    MEDIA ||--o{ FAVORITES : "1:N"
+    USERS ||--o{ RATINGS : "1:N (erstellt)"
+    USERS ||--o{ FAVORITES : "1:N (favorisiert)"
+    USERS ||--o{ RATING_LIKES : "1:N (liked)"
+    MEDIA ||--o{ RATINGS : "1:N (bewertet)"
+    MEDIA ||--o{ FAVORITES : "1:N (ist Favorit)"
+    RATINGS ||--o{ RATING_LIKES : "1:N (erhält Likes)"

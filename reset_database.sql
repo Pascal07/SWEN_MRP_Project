@@ -3,6 +3,7 @@
 
 
 -- Drop all tables in correct order (to respect foreign keys)
+DROP TABLE IF EXISTS rating_likes CASCADE;
 DROP TABLE IF EXISTS favorites CASCADE;
 DROP TABLE IF EXISTS ratings CASCADE;
 DROP TABLE IF EXISTS media CASCADE;
