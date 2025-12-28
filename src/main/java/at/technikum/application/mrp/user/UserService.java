@@ -45,7 +45,7 @@ public class UserService {
     }
 
     private UserProfileDto buildProfile(UserEntity user) {
-        return new UserProfileDto(user.getId(), user.getUsername());
+        return new UserProfileDto(user.getId(), user.getUsername(), user.getEmail());
     }
 
     private String extractBearerToken(String authorizationHeader) {
