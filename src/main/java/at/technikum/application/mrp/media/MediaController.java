@@ -50,6 +50,9 @@ public class MediaController extends Controller {
             Matcher matcher = MEDIA_ID_PATTERN.matcher(path);
             if (matcher.matches()) {
                 Integer id = parseIdWithRegex(matcher);
+                if (id == null) {
+                    return errorJson(Status.NOT_FOUND, "Invalid media ID");
+                }
                 switch (method) {
                     case "GET":
                         return mediaService.getById(id)

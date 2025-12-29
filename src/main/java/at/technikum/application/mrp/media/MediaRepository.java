@@ -2,6 +2,7 @@ package at.technikum.application.mrp.media;
 
 import at.technikum.application.mrp.database.DatabaseConnection;
 import at.technikum.application.mrp.media.entity.MediaEntryEntity;
+import at.technikum.application.mrp.rating.entity.RatingEntity;
 
 import java.sql.*;
 import java.util.*;
@@ -116,11 +117,10 @@ public class MediaRepository {
     public List<MediaEntryEntity> search(String title, String genre, String mediaType,
                                          Integer releaseYear, Integer ageRestriction,
                                          Integer minAverageRating, String sortBy) {
-        StringBuilder sql = new StringBuilder("SELECT m.* FROM media m");
+        StringBuilder sql = new StringBuilder("SELECT DISTINCT m.* FROM media m");
 
-        if (minAverageRating != null) {
-            sql.append(" LEFT JOIN (SELECT media_id, AVG(rating_value) as avg_rating FROM ratings GROUP BY media_id) r ON m.media_id = r.media_id");
-        }
+        // Always include the rating join for filtering and sorting
+        sql.append(" LEFT JOIN ratings r ON m.media_id = r.media_id");
 
         List<String> conditions = new ArrayList<>();
         List<Object> params = new ArrayList<>();
@@ -145,21 +145,26 @@ public class MediaRepository {
             conditions.add("m.age_restriction = ?");
             params.add(ageRestriction);
         }
-        if (minAverageRating != null) {
-            conditions.add("r.avg_rating >= ?");
-            params.add(minAverageRating);
-        }
 
         if (!conditions.isEmpty()) {
             sql.append(" WHERE ").append(String.join(" AND ", conditions));
+        }
+
+        // Group by primary key to support aggregate functions without listing all columns
+        sql.append(" GROUP BY m.media_id");
+
+        // Add HAVING clause for rating filter
+        if (minAverageRating != null) {
+            sql.append(" HAVING AVG(r.rating_value) >= ?");
+            params.add(minAverageRating);
         }
 
         // Sorting
         if (sortBy != null && !sortBy.isBlank()) {
             switch (sortBy.toLowerCase()) {
                 case "title" -> sql.append(" ORDER BY m.title");
-                case "score" -> sql.append(" ORDER BY r.avg_rating DESC NULLS LAST");
-                case "year" -> sql.append(" ORDER BY m.release_year");
+                case "score" -> sql.append(" ORDER BY AVG(r.rating_value) DESC NULLS LAST");
+                case "year" -> sql.append(" ORDER BY m.release_year DESC");
                 default -> sql.append(" ORDER BY m.media_id");
             }
         } else {
@@ -180,7 +185,7 @@ public class MediaRepository {
             }
             return results;
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to search media", e);
+            throw new RuntimeException("Failed to search media: " + e.getMessage(), e);
         }
     }
 
@@ -200,7 +205,43 @@ public class MediaRepository {
         entity.setCreatorUserId((Integer) rs.getObject("creator_user_id"));
         entity.setAgeRestriction((Integer) rs.getObject("age_restriction"));
 
+        // Load ratings for this media
+        entity.setRatings(loadRatingsForMedia(entity.getId()));
+
         return entity;
     }
-}
 
+    private List<RatingEntity> loadRatingsForMedia(int mediaId) {
+        String sql = "SELECT rating_id, user_id, media_id, rating_value, comment, confirmed, created_at FROM ratings WHERE media_id = ?";
+        List<RatingEntity> ratings = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, mediaId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                RatingEntity rating = new RatingEntity();
+                rating.setId(rs.getInt("rating_id"));
+                rating.setUserId(rs.getInt("user_id"));
+                rating.setMediaId(rs.getInt("media_id"));
+                rating.setScore(rs.getInt("rating_value"));
+                rating.setComment(rs.getString("comment"));
+                rating.setConfirmed(rs.getBoolean("confirmed"));
+
+                Timestamp ts = rs.getTimestamp("created_at");
+                if (ts != null) {
+                    rating.setTimestamp(ts.getTime());
+                }
+
+                ratings.add(rating);
+            }
+        } catch (SQLException e) {
+            // Log error but don't fail the whole operation
+            System.err.println("Warning: Failed to load ratings for media " + mediaId + ": " + e.getMessage());
+        }
+
+        return ratings;
+    }
+}
