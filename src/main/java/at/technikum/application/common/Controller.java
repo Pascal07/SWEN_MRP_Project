@@ -6,6 +6,8 @@ import at.technikum.server.http.Response;
 import at.technikum.server.http.Status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public abstract class Controller {
 
@@ -14,6 +16,8 @@ public abstract class Controller {
     // Configure object mapper to be lenient with unknown fields to prevent 500 on extra JSON fields
     protected Controller() {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     public abstract Response handle(Request request);
@@ -41,5 +45,13 @@ public abstract class Controller {
             response.setBody("{\"error\":\"Internal server error\"}");
         }
         return response;
+    }
+
+    protected <T> T parseJson(String json, Class<T> clazz) {
+        try {
+            return objectMapper.readValue(json, clazz);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse JSON: " + e.getMessage(), e);
+        }
     }
 }

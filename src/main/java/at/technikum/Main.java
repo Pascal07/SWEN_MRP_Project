@@ -14,7 +14,6 @@ public class Main {
 
         Server server = new Server(8080, new MrpApplication());
         server.start();
-
     }
 }
 

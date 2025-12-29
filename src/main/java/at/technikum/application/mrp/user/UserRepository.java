@@ -82,5 +82,21 @@ public class UserRepository {
             throw new RuntimeException("Failed to find favorites by user id", e);
         }
     }
+
+    public boolean updateProfile(Integer userId, String email) {
+        String sql = "UPDATE users SET email = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?";
+
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, email);
+            stmt.setInt(2, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update user profile", e);
+        }
+    }
 }
 

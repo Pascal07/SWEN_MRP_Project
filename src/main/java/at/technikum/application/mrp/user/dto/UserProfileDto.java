@@ -1,24 +1,24 @@
 package at.technikum.application.mrp.user.dto;
 
 public class UserProfileDto {
-    private Integer id;
+    private Integer userId;
     private String username;
     private String email;
 
     public UserProfileDto() {}
 
-    public UserProfileDto(Integer id, String username, String email) {
-        this.id = id;
+    public UserProfileDto(Integer userId, String username, String email) {
+        this.userId = userId;
         this.username = username;
         this.email = email;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

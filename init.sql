@@ -72,24 +72,5 @@ CREATE INDEX IF NOT EXISTS idx_favorites_media_id ON favorites(media_id);
 CREATE INDEX IF NOT EXISTS idx_rating_likes_rating_id ON rating_likes(rating_id);
 CREATE INDEX IF NOT EXISTS idx_rating_likes_user_id ON rating_likes(user_id);
 
--- Insert some sample data (optional)
--- Sample users
-INSERT INTO users (username, email, password_hash) VALUES
-    ('admin', 'admin@mrp.com', '$2a$10$dummyHashForAdmin')
-ON CONFLICT (username) DO NOTHING;
 
--- Sample media entries
-INSERT INTO media (title, description, genre, media_type, release_year, director, age_restriction) VALUES
-    ('The Shawshank Redemption', 'Two imprisoned men bond over a number of years.', 'Drama', 'movie', 1994, 'Frank Darabont', 12),
-    ('The Godfather', 'The aging patriarch of an organized crime dynasty transfers control.', 'Crime,Drama', 'movie', 1972, 'Francis Ford Coppola', 16),
-    ('The Dark Knight', 'When the menace known as the Joker wreaks havoc on Gotham.', 'Action,Crime,Drama', 'movie', 2008, 'Christopher Nolan', 12),
-    ('Breaking Bad', 'A high school chemistry teacher turned methamphetamine producer.', 'Crime,Drama,Thriller', 'series', 2008, 'Vince Gilligan', 16),
-    ('The Witcher 3', 'An open-world RPG adventure in a fantasy universe.', 'RPG,Action,Adventure', 'game', 2015, 'CD Projekt Red', 18)
-ON CONFLICT DO NOTHING;
-
-COMMENT ON TABLE users IS 'Stores user account information';
-COMMENT ON TABLE media IS 'Stores media entries (movies, series, games)';
-COMMENT ON TABLE ratings IS 'Stores user ratings for media';
-COMMENT ON TABLE favorites IS 'Stores user favorites';
-COMMENT ON TABLE rating_likes IS 'Stores likes on ratings by users';
 

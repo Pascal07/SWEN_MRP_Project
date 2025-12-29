@@ -1,5 +1,6 @@
 package at.technikum.application.mrp.user;
 
+import at.technikum.application.mrp.user.dto.UpdateProfileDto;
 import at.technikum.application.mrp.user.dto.UserFavoritesDto;
 import at.technikum.application.mrp.user.dto.UserProfileDto;
 import at.technikum.application.mrp.user.dto.UserRatingsDto;
@@ -34,6 +35,20 @@ public class UserService {
                 .map(user -> {
                     var favorites = userRepository.findFavoritesByUserId(user.getId());
                     return new UserFavoritesDto(user.getId(), favorites);
+                });
+    }
+
+    public Optional<UserProfileDto> updateProfile(String authorizationHeader, UpdateProfileDto updateDto) {
+        return authenticate(authorizationHeader)
+                .flatMap(user -> {
+                    if (updateDto.getEmail() != null && !updateDto.getEmail().trim().isEmpty()) {
+                        boolean success = userRepository.updateProfile(user.getId(), updateDto.getEmail());
+                        if (success) {
+                            // Return updated profile
+                            return Optional.of(new UserProfileDto(user.getId(), user.getUsername(), updateDto.getEmail()));
+                        }
+                    }
+                    return Optional.empty();
                 });
     }
 

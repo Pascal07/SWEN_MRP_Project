@@ -1,6 +1,7 @@
 package at.technikum.application.mrp.user;
 
 import at.technikum.application.common.Controller;
+import at.technikum.application.mrp.user.dto.UpdateProfileDto;
 import at.technikum.application.mrp.user.dto.UserFavoritesDto;
 import at.technikum.application.mrp.user.dto.UserProfileDto;
 import at.technikum.application.mrp.user.dto.UserRatingsDto;
@@ -37,14 +38,26 @@ public class UserController extends Controller {
 
         switch (path) {
             case "/users/profile" -> {
-                if (!"GET".equals(method)) {
+                if ("GET".equals(method)) {
+                    Optional<UserProfileDto> profileOpt = userService.getProfile(request.getAuthorization());
+                    if (profileOpt.isEmpty()) {
+                        return errorJson(Status.UNAUTHORIZED, "Missing or invalid Authorization header");
+                    }
+                    return okJson(profileOpt.get());
+                } else if ("PUT".equals(method)) {
+                    try {
+                        UpdateProfileDto updateDto = objectMapper.readValue(request.getBody(), UpdateProfileDto.class);
+                        Optional<UserProfileDto> updatedProfile = userService.updateProfile(request.getAuthorization(), updateDto);
+                        if (updatedProfile.isEmpty()) {
+                            return errorJson(Status.BAD_REQUEST, "Failed to update profile or invalid authorization");
+                        }
+                        return okJson(updatedProfile.get());
+                    } catch (Exception e) {
+                        return errorJson(Status.BAD_REQUEST, "Invalid JSON format: " + e.getMessage());
+                    }
+                } else {
                     return errorJson(Status.METHOD_NOT_ALLOWED, "Method not allowed");
                 }
-                Optional<UserProfileDto> profileOpt = userService.getProfile(request.getAuthorization());
-                if (profileOpt.isEmpty()) {
-                    return errorJson(Status.UNAUTHORIZED, "Missing or invalid Authorization header");
-                }
-                return okJson(profileOpt.get());
             }
             case "/users/ratings" -> {
                 if (!"GET".equals(method)) {
