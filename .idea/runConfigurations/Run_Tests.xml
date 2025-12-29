@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Tests" type="JUnit" factoryName="JUnit">
+    <module name="app" />
+    <option name="MAIN_CLASS_NAME" value="" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="directory" />
+    <envs>
+      <env name="DB_URL" value="jdbc:postgresql://localhost:5432/mrpdb" />
+      <env name="DB_USER" value="mrp" />
+      <env name="DB_PASSWORD" value="mrp" />
+    </envs>
+    <dir value="$PROJECT_DIR$/src/test/java" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
