@@ -34,6 +34,10 @@ public class RecommendationController extends Controller {
             return okJson(recommendationService.recommendationsByGenre(request.getAuthorization(), genre));
         }
 
+        if ("movie".equalsIgnoreCase(type) || "series".equalsIgnoreCase(type)) {
+            return okJson(recommendationService.recommendationsByMediaType(request.getAuthorization(), type));
+        }
+
         return okJson(recommendationService.recommendationsForUser(request.getAuthorization()));
     }
 

@@ -117,7 +117,7 @@ public class MediaRepository {
     public List<MediaEntryEntity> search(String title, String genre, String mediaType,
                                          Integer releaseYear, Integer ageRestriction,
                                          Integer minAverageRating, String sortBy) {
-        StringBuilder sql = new StringBuilder("SELECT DISTINCT m.* FROM media m");
+        StringBuilder sql = new StringBuilder("SELECT m.* FROM media m");
 
         // Always include the rating join for filtering and sorting
         sql.append(" LEFT JOIN ratings r ON m.media_id = r.media_id");
