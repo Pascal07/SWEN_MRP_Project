@@ -110,9 +110,6 @@ public class RatingService {
         Optional<RatingEntity> existingOpt = ratingRepository.findById(id);
         if (existingOpt.isEmpty()) return Optional.empty();
         RatingEntity existing = existingOpt.get();
-        if (existing.getUserId().equals(userId)) {
-            throw new IllegalArgumentException("You cannot like your own rating");
-        }
         existing.getLikedByUserIds().add(userId);
         existing.setTimestamp(System.currentTimeMillis());
         ratingRepository.update(existing);
