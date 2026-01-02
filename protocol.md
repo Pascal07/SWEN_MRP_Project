@@ -343,13 +343,20 @@ router.addRoute("/media", new MediaController());
 
 ### 4. Authentication & Token-Handling
 
-**Entscheidung:** Token-basierte Authentifizierung mit Datenbank-Persistenz.
+**Entscheidung:** Stateless-Token-basierte Authentifizierung (keine Persistenz von Tokens).
+
+**Begründung:**
+- Tokens werden nicht mehr in der Datenbank oder in-memory gespeichert.
+- Stattdessen werden signierte, selbstenthaltende Tokens (z. B. JWT oder HMAC-signed tokens) verwendet.
+- Validierung erfolgt durch Überprüfung der Signatur und des Ablaufdatums. Kein Server-seitiges Token-Repository nötig.
 
 **Implementation:**
-- Token werden in der User-Tabelle gespeichert
-- Einfache String-Token (Format: `username-mrpToken`)
-- Token-Validierung über Repository-Layer
-- Passwort-Hashing für Sicherheit
+- Verwendung eines "AuthTokenManager" zur Erzeugung und Validierung von Tokens:
+  - generateToken(UserEntity) -> signiertes Token mit Claims (username, userId, exp)
+  - validateToken(token) -> prüft Signatur und Ablauf
+  - parseUser(token) -> extrahiert User-Informationen aus den Claims
+- Keine Token-Spalte in der Users-Tabelle nötig.
+- Logout: Client verwirft das Token; serverseitige Ungültigmachung nur optional über eine Blacklist (nicht standardmäßig implementiert).
 
 **Sicherheitsüberlegungen:**
 ```java
@@ -905,12 +912,14 @@ private static final String PASSWORD = System.getenv("DB_PASSWORD");
 ### 3. Problem: Token-Persistenz nach Server-Restart
 
 **Beschreibung:**
-Ursprünglich wurden Tokens in-memory gespeichert und gingen bei Server-Restart verloren.
+Früher wurden Tokens in-memory gehalten und gingen bei Server-Restart verloren oder es wurde versucht, Tokens in der DB zu persistieren. Das ist nicht mehr der Fall.
+
+**Symptome:**
+- Ungültige oder verlorene Sessions nach Neustart (alte Lösung)
 
 **Lösung:**
-- Migration zu **Datenbank-basiertem Token-Storage**
-- Token-Spalte in der Users-Tabelle
-- Token wird beim Login gesetzt und beim Logout entfernt
+- Wechsel zu stateless, signierten Tokens (z. B. JWT). Tokens müssen nicht serverseitig gespeichert werden.
+- Für sofortige Logout-Bedürfnisse kann optional eine Blacklist (z.B. Redis) eingesetzt werden, wird aber nicht standardmäßig verwendet.
 
 ### 4. Problem: SQL-Injection-Gefahr
 

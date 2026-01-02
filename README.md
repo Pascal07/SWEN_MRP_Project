@@ -290,67 +290,6 @@ mvn test -Dtest=AuthServiceUnitTest
 - Importieren in Postman für manuelle API-Tests
 - Enthält alle Endpunkte mit Beispiel-Requests
 
----
-
-## 📁 Projektstruktur
-
-```
-SWEN_MRP_Project/
-├── src/
-│   ├── main/
-│   │   └── java/at/technikum/
-│   │       ├── Main.java                      # Einstiegspunkt
-│   │       ├── application/
-│   │       │   ├── common/                    # Gemeinsame Komponenten
-│   │       │   │   ├── Application.java
-│   │       │   │   ├── Controller.java
-│   │       │   │   ├── Router.java
-│   │       │   │   └── ExceptionMapper.java
-│   │       │   └── mrp/                       # MRP-Anwendung
-│   │       │       ├── MrpApplication.java
-│   │       │       ├── auth/                  # Authentication
-│   │       │       │   ├── AuthController.java
-│   │       │       │   ├── AuthService.java
-│   │       │       │   ├── AuthRepository.java
-│   │       │       │   └── dto/
-│   │       │       ├── user/                  # User Management
-│   │       │       ├── media/                 # Media Management
-│   │       │       ├── rating/                # Rating System
-│   │       │       ├── favorites/             # Favorites
-│   │       │       ├── leaderboard/           # Leaderboard
-│   │       │       ├── recommendation/        # Recommendations
-│   │       │       └── database/              # DB Connection
-│   │       └── server/                        # HTTP Server
-│   │           ├── Server.java
-│   │           ├── Handler.java
-│   │           └── http/
-│   └── test/                                  # 130+ Unit Tests
-│       └── java/at/technikum/application/mrp/
-├── postman/                                   # API-Tests
-├── diagrams/                                  # Architektur-Diagramme
-├── compose.yml                                # Docker Compose
-├── init.sql                                   # DB-Schema
-├── pom.xml                                    # Maven Config
-├── protocol.md                                # Entwicklungsprotokoll
-└── README.md                                  # Diese Datei
-
-```
-
----
-
-## 🛠️ Technologie-Stack
-
-| Bereich | Technologie | Version |
-|---------|-------------|---------|
-| **Sprache** | Java | 21 |
-| **Build** | Maven | 3.x |
-| **HTTP-Server** | Java HttpServer | Built-in |
-| **Datenbank** | PostgreSQL | 18.0 |
-| **Container** | Docker & Docker Compose | Latest |
-| **JSON** | Jackson Databind | 2.17.1 |
-| **DB-Driver** | PostgreSQL JDBC | 42.7.8 |
-| **Testing** | JUnit Jupiter | 6.0.1 |
-| **Mocking** | Mockito | 5.20.0 |
 
 ---
 
@@ -542,20 +481,10 @@ Die API verwendet standardisierte HTTP-Status-Codes:
 
 ## 👥 Mitwirkende
 
-- **Pascal** - Hauptentwickler
-- **FH Technikum Wien** - Software Engineering Lab (Semester 3)
+- **Pascal Letsch** - Hauptentwickler
+
 
 **Repository:** https://github.com/Pascal07/SWEN_MRP_Project
 
----
 
-## 📜 Lizenz
-
-Dieses Projekt wurde im Rahmen des Software Engineering Labs an der FH Technikum Wien entwickelt.
-
----
-
-**Letzte Aktualisierung:** Januar 2026  
-**Version:** 1.0.0  
-**Status:** ✅ Production Ready
 
